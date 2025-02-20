@@ -31,4 +31,4 @@ jobs:
         run: |
           git add ansible/backups
           git commit -m 'Backup running config'
-          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/00houdini/network-automation-lab.git"
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/jperry22/Network-Automation.git"
