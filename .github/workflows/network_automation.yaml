@@ -1,0 +1,34 @@
+name: Network Automation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ansible/**'
+      - '.github/workflows/network-automation.yaml'
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  configure-network:
+    runs-on:
+      - self-hosted
+      - network-lab-runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+          
+      - name: Run configure_devices.yaml playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          ansible-playbook ansible/configure_devices.yaml -i ansible/hosts --extra-vars "ansible_ssh_pass=${{ secrets.DEVICE_PASSWORD }} ansible_user=${{ secrets.DEVICE_USERNAME }}"
+
+      - name: Commit to your repository
+        run: |
+          git add ansible/backups
+          git commit -m 'Backup running config'
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/00houdini/network-automation-lab.git"
